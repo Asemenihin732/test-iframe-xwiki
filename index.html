@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Тест iframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #e0eafc, #cfdef3);
+            /* 柔和渐变底纹，模拟液态玻璃背景的流动感 */
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* 装饰性光晕，增加液态氛围 */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(ellipse at 70% 40%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 主容器 —— 液态玻璃卡片风格 */
+        .glass-container {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            background: rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border-radius: 3rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25),
+                        0 2px 6px rgba(0, 0, 0, 0.02),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        /* 内层柔光，模拟液态玻璃折射 */
+        .glass-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 3rem;
+            background: radial-gradient(ellipse at 30% 20%, rgba(255,255,240,0.3) 0%, rgba(200,220,255,0.05) 80%);
+            pointer-events: none;
+        }
+
+        /* 头部极简装饰 */
+        .glass-header {
+            padding: 1.8rem 2.5rem 0.8rem 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .glass-title {
+            font-weight: 500;
+            font-size: 1.4rem;
+            letter-spacing: -0.3px;
+            color: #1c2e3f;
+            background: linear-gradient(135deg, #1e2f3a, #1d3e4b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+            backdrop-filter: blur(2px);
+        }
+
+        .glass-badge {
+            background: rgba(255,255,245,0.5);
+            backdrop-filter: blur(4px);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #2c4b5e;
+            border: 0.5px solid rgba(255,255,255,0.6);
+            letter-spacing: 0.3px;
+        }
+
+        .note {
+            font-size: 0.75rem;
+            color: #2f5b6e;
+            background: rgba(255,250,240,0.35);
+            backdrop-filter: blur(2px);
+            padding: 0.25rem 0.9rem;
+            border-radius: 60px;
+            border: 0.3px solid rgba(255,255,245,0.7);
+        }
+
+        /* iframe 包裹容器 — 增加液态内边距及圆润感 */
+        .iframe-wrapper {
+            padding: 0.8rem 1.8rem 1.8rem 1.8rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 让 iframe 拥有半透玻璃质感 + 柔边 */
+        .liquid-iframe {
+            width: 100%;
+            height: 730px;
+            border: none;
+            border-radius: 1.8rem;
+            background: rgba(248, 250, 252, 0.45);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            display: block;
+        }
+
+        
+
+        /* 简约脚注 — 液态微光 */
+        .glass-footer {
+            padding: 0.9rem 2rem 1.6rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            color: #2c5a6e;
+            letter-spacing: 0.2px;
+            font-weight: 450;
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .footer-left span {
+            background: rgba(245, 245, 255, 0.3);
+            padding: 0.2rem 0.7rem;
+            border-radius: 50px;
+            backdrop-filter: blur(2px);
+            font-size: 0.7rem;
+        }
+
+        .footer-right {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* 响应式适配: 移动端优雅缩减内边距 */
+        @media (max-width: 780px) {
+            body {
+                padding: 1rem;
+            }
+            .glass-header {
+                padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+            }
+            .iframe-wrapper {
+                padding: 0.6rem 1rem 1.2rem 1rem;
+            }
+            .liquid-iframe {
+                height: 550px;
+                border-radius: 1.2rem;
+            }
+            .glass-footer {
+                padding: 0.8rem 1.2rem 1.2rem 1.2rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .glass-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .liquid-iframe {
+                height: 450px;
+            }
+        }
+
+        /* 自定义滚动条美观但隐藏避免破坏美感 (可选) */
+        .liquid-iframe::-webkit-scrollbar {
+            width: 6px;
+            background: transparent;
+        }
+        
+        /* 增加一点点玻璃拖尾光晕动画（自动呼吸效果） */
+        @keyframes gentleGlow {
+            0% {
+                box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,245,0.5);
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+            100% {
+                box-shadow: 0 28px 42px -12px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,250,0.7);
+                border-color: rgba(255, 255, 255, 0.55);
+            }
+        }
+        
+        
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <div class="glass-header">
+        <div class="title-section">
+        
+        </div>
+        
+    </div>
+    
+    <div class="iframe-wrapper">
+        <!-- 原链接保持不变，增加性能属性 loading lazy 提升体验，sandbox可选但保持默认更安全通常为宽松，因内容需要显示wiki页面 -->
+        <iframe 
+            class="liquid-iframe" 
+            src="https://test-xwiki.rbdata.group/wiki/testscripttree/view/%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82%D1%81%D1%82%D0%B2%D0%B8%D0%B5/" 
+            width="100%" 
+            height="750px"
+            loading="lazy"
+            title="XWiki приветствие"
+            frameborder="0"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+    </div>
+    
+    <div class="glass-footer">
+        
+    </div>
+</div>
+
+<!-- 可选增加脚注额外动态微交互让玻璃效果稍微灵动但不影响内容 -->
+</body>
+</html>
